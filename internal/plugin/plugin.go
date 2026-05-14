@@ -95,6 +95,12 @@ func (p *Plugin) OffHours(ctx context.Context, req sdk.OffHoursRequest) ([]sdk.O
 	}
 
 	intervals, dropped := buildIntervals(events, p.absenceFilter, req)
+	if len(intervals) > 0 {
+		_ = p.host.Log(ctx, "info", "personio dayoff intervals submitted", map[string]string{
+			"count": strconv.Itoa(len(intervals)),
+			"days":  formatIntervalsForLog(intervals),
+		})
+	}
 	if dropped > 0 {
 		_ = p.host.Log(ctx, "debug", "events outside requested window dropped", map[string]string{
 			"dropped":     strconv.Itoa(dropped),

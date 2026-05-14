@@ -181,3 +181,67 @@ func equalSlice(a, b []string) bool {
 	}
 	return true
 }
+
+func TestFormatIntervalsForLog(t *testing.T) {
+	// Maifeiertag: full day on 2026-05-01 in Europe/Berlin (CEST, UTC+2).
+	//   Start = 2026-04-30T22:00Z   End = 2026-05-01T22:00Z (half-open).
+	maifeiertag := sdk.OffHoursInterval{
+		Start:  time.Date(2026, 4, 30, 22, 0, 0, 0, time.UTC),
+		End:    time.Date(2026, 5, 1, 22, 0, 0, 0, time.UTC),
+		Reason: "Maifeiertag",
+	}
+	// Urlaub 17.07 → 26.07 (CEST):
+	//   Start = 2026-07-16T22:00Z   End = 2026-07-26T22:00Z (half-open).
+	urlaub := sdk.OffHoursInterval{
+		Start:  time.Date(2026, 7, 16, 22, 0, 0, 0, time.UTC),
+		End:    time.Date(2026, 7, 26, 22, 0, 0, 0, time.UTC),
+		Reason: "Urlaub",
+	}
+
+	got := formatIntervalsForLog([]sdk.OffHoursInterval{maifeiertag, urlaub})
+	want := "2026-05-01 (Maifeiertag); 2026-07-17..2026-07-26 (Urlaub)"
+	if got != want {
+		t.Errorf("got %q, want %q", got, want)
+	}
+}
+
+func TestFormatIntervalsForLog_SingleEntrySingleDay(t *testing.T) {
+	iv := sdk.OffHoursInterval{
+		Start:  time.Date(2026, 5, 24, 22, 0, 0, 0, time.UTC),
+		End:    time.Date(2026, 5, 25, 22, 0, 0, 0, time.UTC),
+		Reason: "Pfingstmontag",
+	}
+	got := formatIntervalsForLog([]sdk.OffHoursInterval{iv})
+	want := "2026-05-25 (Pfingstmontag)"
+	if got != want {
+		t.Errorf("got %q, want %q", got, want)
+	}
+}
+
+func TestFormatIntervalsForLog_Empty(t *testing.T) {
+	if got := formatIntervalsForLog(nil); got != "" {
+		t.Errorf("nil input: got %q, want empty string", got)
+	}
+	if got := formatIntervalsForLog([]sdk.OffHoursInterval{}); got != "" {
+		t.Errorf("empty input: got %q, want empty string", got)
+	}
+}
+
+// TestFormatIntervalsForLog_WinterTime guards the case where the local
+// calendar day and the UTC day disagree on the *winter* side of DST
+// (Europe/Berlin = UTC+1 in winter). The reverse offset must not roll the
+// display forward.
+func TestFormatIntervalsForLog_WinterTime(t *testing.T) {
+	// 2026-12-25 in Europe/Berlin (CET, UTC+1):
+	//   Start = 2026-12-24T23:00Z   End = 2026-12-25T23:00Z
+	iv := sdk.OffHoursInterval{
+		Start:  time.Date(2026, 12, 24, 23, 0, 0, 0, time.UTC),
+		End:    time.Date(2026, 12, 25, 23, 0, 0, 0, time.UTC),
+		Reason: "1. Weihnachtstag",
+	}
+	got := formatIntervalsForLog([]sdk.OffHoursInterval{iv})
+	want := "2026-12-25 (1. Weihnachtstag)"
+	if got != want {
+		t.Errorf("got %q, want %q", got, want)
+	}
+}

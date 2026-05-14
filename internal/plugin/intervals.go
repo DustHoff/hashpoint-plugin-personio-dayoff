@@ -4,10 +4,18 @@ import (
 	"strings"
 	"time"
 
+	_ "time/tzdata"
+
 	sdk "github.com/dusthoff/hashpoint/plugin/sdk"
 
 	"github.com/DustHoff/hashpoint-plugin-personio-dayoff/internal/personio"
 )
+
+// displayTimezone is the timezone used to format interval boundaries for the
+// success log. Personio's UI API delivers events in Europe/Berlin and our
+// parser stores them as UTC — rendering back in Berlin keeps the log entries
+// readable for European users.
+const displayTimezone = "Europe/Berlin"
 
 // buildIntervals maps personio.TimeOffEvent values to sdk.OffHoursInterval,
 // applying the user-configured absence-type filter and clipping each event
@@ -62,4 +70,37 @@ func matchesFilter(absenceType string, filter []string) bool {
 		}
 	}
 	return false
+}
+
+// formatIntervalsForLog renders intervals as a compact, single-line summary
+// fit for a host.Log() field. Single-day intervals collapse to one date;
+// multi-day intervals render as `start..end (Reason)`. Boundaries are
+// presented in Europe/Berlin (Personio's source timezone), and the
+// half-open End is converted to an inclusive last calendar day by
+// subtracting one nanosecond before formatting — so an Urlaub running
+// 17.–26. July does not display as 17.–27. July.
+//
+// Empty input produces an empty string; callers should gate the log call
+// on len(intervals) > 0 to avoid noise.
+func formatIntervalsForLog(intervals []sdk.OffHoursInterval) string {
+	if len(intervals) == 0 {
+		return ""
+	}
+	loc, err := time.LoadLocation(displayTimezone)
+	if err != nil {
+		loc = time.UTC
+	}
+	parts := make([]string, 0, len(intervals))
+	for _, iv := range intervals {
+		startLocal := iv.Start.In(loc).Format("2006-01-02")
+		endLocal := iv.End.Add(-time.Nanosecond).In(loc).Format("2006-01-02")
+		var dateRange string
+		if startLocal == endLocal {
+			dateRange = startLocal
+		} else {
+			dateRange = startLocal + ".." + endLocal
+		}
+		parts = append(parts, dateRange+" ("+iv.Reason+")")
+	}
+	return strings.Join(parts, "; ")
 }
