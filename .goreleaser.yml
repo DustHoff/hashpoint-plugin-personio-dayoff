@@ -36,7 +36,12 @@ archives:
       - LICENSE*
 
 checksum:
-  name_template: "checksums.txt"
+  algorithm: sha256
+  # split: true emits one checksum file per release artifact instead of a
+  # single aggregated checksums.txt — every download gets a matching
+  # .sha256 sidecar that can be verified independently.
+  split: true
+  name_template: "{{ .ArtifactName }}.sha256"
 
 changelog:
   use: github

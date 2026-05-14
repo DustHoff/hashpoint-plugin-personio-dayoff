@@ -50,6 +50,7 @@ Diese Prüfung ist **nicht optional** und gehört explizit in jeden Feature-Work
   - `feat:` → MINOR
   - Breaking Change (`!` oder `BREAKING CHANGE:` im Footer) → MAJOR
 - Das Release enthält gebaute Artefakte (statische Binaries, mind. linux/amd64; weitere Plattformen nach Bedarf) und einen automatisch generierten Changelog.
+- **Jedes Release-Artefakt MUSS eine SHA256-Checksumme als `.sha256`-Sidecar haben.** Konfiguriert in `.goreleaser.yml` über `checksum.split: true` mit `algorithm: sha256` und `name_template: "{{ .ArtifactName }}.sha256"`. Konsumenten können damit ohne ein gemeinsames `checksums.txt` jedes Artefakt einzeln verifizieren (`sha256sum -c personio-dayoff_<ver>_windows_amd64.zip.sha256`).
 - **Plugin-Major MUSS SDK-Major spiegeln.** Die Major-Version des Plugins ist
   identisch mit der Major-Version des Hashpoint-SDK (siehe `go.mod`,
   `require github.com/dusthoff/hashpoint vX.Y.Z`). Aktuell:
