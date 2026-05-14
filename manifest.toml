@@ -1,13 +1,8 @@
 name        = "personio-dayoff"
-version     = "0.1.0"
+version     = "0.2.0"
 api_version = 1
 description = "Liest Dayoff-/Abwesenheitstage aus der Personio-Frontend-API und stellt sie als Off-Hours-Intervalle bereit."
 capabilities = ["off_hours_provider"]
-
-[config_schema.fields.base_url]
-label    = "Personio Base URL"
-type     = "text"
-required = true
 
 [config_schema.fields.absence_type_filter]
 label    = "Absence-Type Filter (kommagetrennt, leer = alle)"
