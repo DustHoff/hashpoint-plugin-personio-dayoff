@@ -70,8 +70,12 @@ Diese Prüfung ist **nicht optional** und gehört explizit in jeden Feature-Work
   injiziert die Version beim Release:
   - `pluginVersion` per `-X` ldflag (siehe `.goreleaser.yml`)
   - `manifest.toml.version` per `scripts/inject-manifest-version.sh`
-    Hook, der eine substituierte Kopie nach `dist/manifest.toml`
-    schreibt; das Archiv enthält diese Kopie.
+    Hook, der eine substituierte Kopie nach `manifest.toml.versioned`
+    (Repo-Root, gitignored) schreibt; das Archiv enthält diese Kopie
+    als `manifest.toml`. Das Schreiben passiert bewusst NICHT unter
+    `dist/`, weil GoReleasers "ensuring distribution directory"-Pipe
+    nach den `before.hooks` läuft und ein nicht-leeres `dist/`
+    ablehnt.
 
   Lokale `go build` / `go test` Builds zeigen also "dev" als Version —
   Release-Binaries zeigen die Tag-Version. Der Unit-Test
