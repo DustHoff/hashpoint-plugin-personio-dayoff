@@ -5,6 +5,8 @@ project_name: personio-dayoff
 before:
   hooks:
     - go mod tidy
+    - mkdir -p dist
+    - sh scripts/inject-manifest-version.sh {{ .Version }}
 
 builds:
   - id: personio-dayoff
@@ -21,16 +23,15 @@ builds:
     ldflags:
       - -s -w
       - -H=windowsgui
-      - -X main.version={{.Version}}
-      - -X main.commit={{.Commit}}
-      - -X main.date={{.Date}}
+      - -X github.com/DustHoff/hashpoint-plugin-personio-dayoff/internal/plugin.pluginVersion={{ .Version }}
 
 archives:
   - id: default
     formats: [zip]
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     files:
-      - manifest.toml
+      - src: dist/manifest.toml
+        dst: manifest.toml
       - README.md
       - LICENSE*
 

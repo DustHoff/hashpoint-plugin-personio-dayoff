@@ -61,6 +61,21 @@ Diese Prüfung ist **nicht optional** und gehört explizit in jeden Feature-Work
   erzwungen. Grund: die SDK-Major-Version definiert den Plugin-Vertrag
   (`HostAPIVersion`, Interfaces); ein Major-Mismatch würde die
   Versionsnummer als Kompatibilitätsindikator wertlos machen.
+- **Versions-String wird zur Release-Zeit aus dem Git-Tag injiziert.** Die
+  in-source Werte (`pluginVersion` in `internal/plugin/plugin.go`,
+  `version` in `manifest.toml`) sind Placeholder (`"dev"` bzw.
+  `"0.0.0-dev"`) und dürfen NICHT manuell auf eine "echte" Version gesetzt
+  werden — der Git-Tag ist die einzige Wahrheitsquelle. GoReleaser
+  injiziert die Version beim Release:
+  - `pluginVersion` per `-X` ldflag (siehe `.goreleaser.yml`)
+  - `manifest.toml.version` per `scripts/inject-manifest-version.sh`
+    Hook, der eine substituierte Kopie nach `dist/manifest.toml`
+    schreibt; das Archiv enthält diese Kopie.
+
+  Lokale `go build` / `go test` Builds zeigen also "dev" als Version —
+  Release-Binaries zeigen die Tag-Version. Der Unit-Test
+  `TestMetadata_VersionIsPlaceholder` verhindert, dass jemand versehentlich
+  den Placeholder hardcoded.
 
 ## Qualitätsregeln
 

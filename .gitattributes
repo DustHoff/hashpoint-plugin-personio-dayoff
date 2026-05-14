@@ -1,0 +1,2 @@
+# Shell scripts MUST be LF — they run on Linux CI and break with CRLF.
+*.sh text eol=lf
