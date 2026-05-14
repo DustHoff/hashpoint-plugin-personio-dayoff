@@ -5,7 +5,6 @@ project_name: personio-dayoff
 before:
   hooks:
     - go mod tidy
-    - mkdir -p dist
     - sh scripts/inject-manifest-version.sh {{ .Version }}
 
 builds:
@@ -30,7 +29,7 @@ archives:
     formats: [zip]
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     files:
-      - src: dist/manifest.toml
+      - src: manifest.toml.versioned
         dst: manifest.toml
       - README.md
       - LICENSE*
