@@ -50,6 +50,17 @@ Diese Prüfung ist **nicht optional** und gehört explizit in jeden Feature-Work
   - `feat:` → MINOR
   - Breaking Change (`!` oder `BREAKING CHANGE:` im Footer) → MAJOR
 - Das Release enthält gebaute Artefakte (statische Binaries, mind. linux/amd64; weitere Plattformen nach Bedarf) und einen automatisch generierten Changelog.
+- **Plugin-Major MUSS SDK-Major spiegeln.** Die Major-Version des Plugins ist
+  identisch mit der Major-Version des Hashpoint-SDK (siehe `go.mod`,
+  `require github.com/dusthoff/hashpoint vX.Y.Z`). Aktuell:
+  SDK v1.x → Plugin v1.x. Wenn das SDK einen Major-Bump bekommt (z. B.
+  v1.x → v2.0), MUSS das Plugin bei der nächsten Veröffentlichung
+  ebenfalls einen Major-Bump erhalten — auch wenn die eigentlichen
+  Plugin-Änderungen nicht breaking sind. Das wird über einen
+  `feat!:` / `fix!:` / `chore!:` Commit oder einen `BREAKING CHANGE:`-Footer
+  erzwungen. Grund: die SDK-Major-Version definiert den Plugin-Vertrag
+  (`HostAPIVersion`, Interfaces); ein Major-Mismatch würde die
+  Versionsnummer als Kompatibilitätsindikator wertlos machen.
 
 ## Qualitätsregeln
 
