@@ -1,5 +1,5 @@
 name        = "personio-dayoff"
-version     = "0.2.0"
+version     = "1.0.0"
 api_version = 1
 description = "Liest Dayoff-/Abwesenheitstage aus der Personio-Frontend-API und stellt sie als Off-Hours-Intervalle bereit."
 capabilities = ["off_hours_provider"]

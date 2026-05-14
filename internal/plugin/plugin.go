@@ -15,7 +15,7 @@ import (
 
 const (
 	pluginName    = "personio-dayoff"
-	pluginVersion = "0.2.0"
+	pluginVersion = "1.0.0"
 )
 
 type Plugin struct {
