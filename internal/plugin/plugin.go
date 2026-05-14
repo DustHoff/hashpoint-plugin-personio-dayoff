@@ -13,10 +13,14 @@ import (
 	"github.com/DustHoff/hashpoint-plugin-personio-dayoff/internal/personio"
 )
 
-const (
-	pluginName    = "personio-dayoff"
-	pluginVersion = "1.0.0"
-)
+const pluginName = "personio-dayoff"
+
+// pluginVersion is overridden at release time via GoReleaser's
+// `-X github.com/.../internal/plugin.pluginVersion={{ .Version }}` ldflag,
+// so the git tag is the single source of truth for the version reported
+// by Metadata(). The "dev" placeholder is what regular `go build` (e.g.
+// in CI's vet/test step, or a local dev build) produces.
+var pluginVersion = "dev"
 
 type Plugin struct {
 	host          sdk.HostAPI
