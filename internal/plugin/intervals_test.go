@@ -125,10 +125,10 @@ func TestClip(t *testing.T) {
 	to := mkUTC(2026, 5, 31, 0)
 
 	cases := []struct {
-		name             string
-		start, end       time.Time
+		name               string
+		start, end         time.Time
 		wantStart, wantEnd time.Time
-		wantOK           bool
+		wantOK             bool
 	}{
 		{"fully inside", mkUTC(2026, 5, 10, 0), mkUTC(2026, 5, 12, 0), mkUTC(2026, 5, 10, 0), mkUTC(2026, 5, 12, 0), true},
 		{"clip start", mkUTC(2026, 4, 30, 0), mkUTC(2026, 5, 5, 0), from, mkUTC(2026, 5, 5, 0), true},

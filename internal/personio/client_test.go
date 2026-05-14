@@ -32,6 +32,7 @@ func TestClient_UpcomingTimeOff_HappyPath(t *testing.T) {
 	}
 
 	c := personio.NewClientWithHTTPClient(srv.Client())
+	//nolint:gosec // G101: test fixtures, not real credentials
 	sess := sdk.PersonioSession{
 		AppHost:   u.Host,
 		CSRFToken: "test-xsrf-token",

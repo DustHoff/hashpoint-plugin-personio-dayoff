@@ -73,6 +73,10 @@ func (c *Client) UpcomingTimeOff(ctx context.Context, sess sdk.PersonioSession) 
 	}
 	req.Header.Set("timezone", defaultTimezone)
 	for _, ck := range sess.Cookies {
+		// Outbound request cookies serialise as plain Name=Value pairs in
+		// the Cookie header — Secure/HttpOnly/SameSite are browser-enforced
+		// response-side attributes and have no effect here.
+		//nolint:gosec // G124: outbound request cookie, security flags not applicable
 		req.AddCookie(&http.Cookie{Name: ck.Name, Value: ck.Value})
 	}
 
