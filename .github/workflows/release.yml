@@ -39,7 +39,11 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          default_bump: false
+          # On normal pushes: only feat/fix/BREAKING-CHANGE produce a bump.
+          # On manual workflow_dispatch: force a patch bump so the user can
+          # mint a fresh release even when no bumpable commits have landed
+          # since the last tag (e.g. to apply a release-tooling change).
+          default_bump: ${{ github.event_name == 'workflow_dispatch' && 'patch' || 'false' }}
           release_branches: main
 
       # mathieudutour/github-tag-action creates the new tag via the GitHub
