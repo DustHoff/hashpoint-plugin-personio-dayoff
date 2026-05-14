@@ -28,6 +28,12 @@ archives:
   - id: default
     formats: [zip]
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    # Nest every archive entry inside a `personio-dayoff/` directory so
+    # consumers (in particular the Hashpoint host's PluginManagement
+    # handler, which installs into <PluginsDir>/<name>/) get a ready-to-drop
+    # plugin folder when they extract the zip rather than loose files at
+    # the archive root.
+    wrap_in_directory: "{{ .ProjectName }}"
     files:
       - src: manifest.toml.versioned
         dst: manifest.toml
