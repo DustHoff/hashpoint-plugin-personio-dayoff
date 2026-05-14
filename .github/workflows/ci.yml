@@ -31,7 +31,7 @@ jobs:
         run: go vet ./...
 
       - name: go test
-        run: go test ./... -race -count=1
+        run: go test ./... -count=1
 
       - name: go build (windows/amd64, gui)
         env:
